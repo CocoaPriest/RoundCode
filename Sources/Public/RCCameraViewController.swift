@@ -91,14 +91,16 @@ public extension RCCameraViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
-      DispatchQueue.global(qos: .background).async {
+      DispatchQueue.global(qos: .userInteractive).async {
           self.captureSession.startRunning()
       }
   }
   
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
-    captureSession.stopRunning()
+      DispatchQueue.global(qos: .userInteractive).async {
+          self.captureSession.stopRunning()
+      }
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -134,7 +136,9 @@ extension RCCameraViewController {
   }
   
   @objc private func cancelPressed() {
-    captureSession.stopRunning()
+      DispatchQueue.global(qos: .userInteractive).async {
+          self.captureSession.stopRunning()
+      }
     delegate?.cameraViewControllerDidCancel()
     dismiss(animated: true)
   }
@@ -199,7 +203,9 @@ extension RCCameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     coder.imageDecoder.size = size
     coder.imageDecoder.bytesPerRow = bytesPerRow
     if let message = try? coder.decode(buffer: lumaCopy.assumingMemoryBound(to: UInt8.self)) {
-      captureSession.stopRunning()
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.captureSession.stopRunning()
+        }
       DispatchQueue.main.async {[weak self] in
         self?.delegate?.cameraViewController(didFinishScanning: message)
         self?.dismiss(animated: true)
