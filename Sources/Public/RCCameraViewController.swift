@@ -90,7 +90,10 @@ public extension RCCameraViewController {
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    captureSession.startRunning()
+
+      DispatchQueue.global(qos: .background).async {
+          self.captureSession.startRunning()
+      }
   }
   
   override func viewWillDisappear(_ animated: Bool) {
