@@ -205,11 +205,12 @@ extension RCCameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     if let message = try? coder.decode(buffer: lumaCopy.assumingMemoryBound(to: UInt8.self)) {
         DispatchQueue.global(qos: .userInteractive).async {
             self.captureSession.stopRunning()
+
+            DispatchQueue.main.async {[weak self] in
+                self?.delegate?.cameraViewController(didFinishScanning: message)
+                self?.dismiss(animated: true)
+            }
         }
-      DispatchQueue.main.async {[weak self] in
-        self?.delegate?.cameraViewController(didFinishScanning: message)
-        self?.dismiss(animated: true)
-      }
     }
     lumaCopy.deallocate()
     CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
